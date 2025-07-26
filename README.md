@@ -1,5 +1,5 @@
 # MasterOS
-Think of an operating system that is lightweight, built in .net Framework, and open source!
+Think of an operating system that is lightweight, TUI-based, and open source!
 Well you just met MasterOS.
 
 # Origin
