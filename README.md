@@ -19,12 +19,13 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 - Note: !! This statistics are not tested !!
 
 # Updates / Logs
-- v0.6.* series started
-- keyboard driver added
-- User now can type and edit their text
+- v0.6.0 Zeta version
+- memory patches added
+- kmalloc update will be added 
 
 # Spoilers
-- memory patches will be added
+- memory patches will be updated further
+- after memory updates, a shell will be made to run commands 
 
 # Want to help us?
 You can reach us from our e-mails to join our project and contribute to the mOS projects!
