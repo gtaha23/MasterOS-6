@@ -19,12 +19,12 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 - Note: !! This statistics are not tested !!
 
 # Updates / Logs
-- v0.6.0 Zeta version
+- v0.6.5 Börü(Wolf) version
 - memory patches added
 - kmalloc update will be added 
 
 # Spoilers
-- memory patches will be updated further
+- memory patches will be finished with kmalloc update in the further weeks
 - after memory updates, a shell will be made to run commands 
 
 # Want to help us?
