@@ -4,6 +4,7 @@
 #include "timer.h"
 #include "gdt.h"
 #include "stdlib/stdio.h"
+#include "kmalloc.h"
 #include "keyboard.h"
 #include "multiboot.h"
 #include "memory.h"
@@ -12,7 +13,7 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo);
 
 void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
 	Reset();
-	print("MasterOS v0.6.1 Börü \r\n");
+	print("MasterOS v0.6.2 Turan \r\n");
 	initGDT();
 	print("GDT & TSS systems stable\r\n");
 	initIDT();
@@ -22,7 +23,7 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
 		
 	initMemory(bootInfo->mem_upper * 1024, physicalAllocStart);
 	print("Memory Allocation [DONE]\r\n");
-	
+	kmallocInit(0x1000);
 	print(">");
 	initKeyb();
 	
