@@ -15,8 +15,9 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
 	Reset();
 	print("MasterOS v0.6.2 Turan \r\n");
 	initGDT();
-	print("GDT & TSS systems stable\r\n");
+	print("GDT [DONE]\r\n");
 	initIDT();
+	print("IDT [DONE]\r\n");
 	initTimer();
 	uint32_t mod1 = *(uint32_t*)(bootInfo->mods_addr + 4);
 	uint32_t physicalAllocStart = (mod1 + 0xFF) & ~0xFFF;
