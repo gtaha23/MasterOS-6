@@ -20,8 +20,8 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 
 # Updates / Logs
 - v0.6.2 Turan(Homeland) version
-- memory patches added
-- kmalloc update will be added 
+- kernel updated
+- kmalloc added 
 
 # Spoilers
 - Memory updates finished!
