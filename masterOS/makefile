@@ -15,6 +15,7 @@ kernel:
 	gcc $(CFLAGS) -c src/stdlib/stdio.c -o stdio.o
 	gcc $(CFLAGS) -c src/keyboard.c -o keyboard.o
 	gcc $(CFLAGS) -c src/memory.c -o memory.o
+	gcc $(CFLAGS) -c src/kmalloc.c -o kmalloc.o
 
 bootloader:
 	nasm -f elf32 src/boot.s -o boot.o
@@ -22,7 +23,7 @@ bootloader:
 	nasm -f elf32 src/interrupts/idt.s -o idts.o
 
 iso:
-	ld -m elf_i386 -T linker.ld -o kernel boot.o kernel.o vga.o gdt.o gdts.o util.o idt.o idts.o timer.o stdio.o keyboard.o memory.o
+	ld -m elf_i386 -T linker.ld -o kernel boot.o kernel.o vga.o gdt.o gdts.o util.o idt.o idts.o timer.o stdio.o keyboard.o memory.o kmalloc.o
 	mv kernel mOS/boot/kernel
 	grub-mkrescue -o kernel.iso mOS/
 	rm *.o
