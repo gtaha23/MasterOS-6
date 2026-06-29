@@ -32,3 +32,8 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 You can reach us from our e-mails to join our project and contribute to the mOS projects!
 
 # ScreenShots
+- The help command working <br />
+![help command](image-1.png)
+
+- The version being checked <br />
+![version command](image-3.png)
