@@ -12,20 +12,21 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 - e0tra
 
 ## System Requirements
-- 10 MB Hard Disk
-- 6 MB RAM
+- 32 MB Hard Disk
+- 16 MB RAM
 - Any 1 Core or more x86 / amd64 CPU
 - GPU optional
 - Note: !! This statistics are tested !!
 
 # Updates / Logs
-- v0.6.2 Turan(Homeland) version
+- v0.6.3 Kemal version
 - kernel updated
-- kmalloc added 
+- shell added
+- fat12 filesystem added
 
 # Spoilers
-- Memory updates finished!
-- Command system
+- FILESYSTEM ADDED !!
+- A shell has been created.
 
 # Want to help us?
 You can reach us from our e-mails to join our project and contribute to the mOS projects!
