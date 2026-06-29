@@ -3,6 +3,7 @@
 #include "util.h"
 #include "stdlib/stdio.h"
 #include "keyboard.h"
+#include "shell.h"          // <-- new
 
 bool capsOn;
 bool capsLock;
@@ -67,54 +68,42 @@ UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN
 void initKeyb(){
     capsOn = false;
     capsLock = false;
-    irq_install_handler(1,&keybHandler);
+    irq_install_handler(1, &keybHandler);
 }
 
 void keybHandler(struct InterruptRegisters *regs){
-    char scanCode = inPortB(0x60) & 0x7F; // Key that is pressed
-    char press = inPortB(0x60) & 0x80; // Press down or release
+    char scanCode = inPortB(0x60) & 0x7F;
+    char press    = inPortB(0x60) & 0x80;
 
     switch(scanCode){
         case 1:
         case 29:
         case 56:
-        case 59:
-        case 60:
-        case 61:
-        case 62:
-        case 63:
-        case 64:
-        case 65:
-        case 66:
-        case 67:
-        case 68:
-        case 87:
-        case 88:
+        case 59: case 60: case 61: case 62: case 63:
+        case 64: case 65: case 66: case 67: case 68:
+        case 87: case 88:
             break;
-        case 42:
-            //shift key
-            if (press == 0){
-                capsOn = true;
-            }else{
-                capsOn = false;
-            }
+
+        case 42: // Left Shift
+            capsOn = (press == 0);
             break;
-        case 58:
-            if (!capsLock && press == 0){
-                capsLock = true;
-            }else if (capsLock && press == 0){
-                capsLock = false;
-            }
+
+        case 58: // Caps Lock
+            if (press == 0)
+                capsLock = !capsLock;
             break;
+
         default:
-            if (press == 0){
-                if (capsOn || capsLock){
-                    printf("%c", uppercase[scanCode]);
-                }else{
-                    printf("%c", lowercase[scanCode]);
+            if (press == 0) {
+                uint32_t key = (capsOn || capsLock)
+                               ? uppercase[scanCode]
+                               : lowercase[scanCode];
+
+                // Only forward printable ASCII, backspace, and newline
+                if (key < 0x80 || key == '\b' || key == '\n') {
+                    shell_handle_char((char)key);
                 }
             }
-            
+            break;
     }
-
 }

@@ -13,3 +13,9 @@ struct InterruptRegisters {
 	uint32_t int_no, err_code;
 	uint32_t eip, csm, eflags, use_resp, ss;
 };
+
+static inline uint16_t inPortW(uint16_t port) {
+    uint16_t val;
+    __asm__ volatile ("inw %1, %0" : "=a"(val) : "Nd"(port));
+    return val;
+}
