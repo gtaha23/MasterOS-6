@@ -12,11 +12,11 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 - e0tra
 
 ## System Requirements
-- 125 MB Hard Disk
-- 128 MB RAM
+- 10 MB Hard Disk
+- 6 MB RAM
 - Any 1 Core or more x86 / amd64 CPU
-- Any GPU
-- Note: !! This statistics are not tested !!
+- GPU optional
+- Note: !! This statistics are tested !!
 
 # Updates / Logs
 - v0.6.2 Turan(Homeland) version
