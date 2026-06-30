@@ -23,7 +23,9 @@
 #define ATA_SLAVE  0xF0
 
 // ── Commands ──────────────────────────────────────────────────────────────────
-#define ATA_CMD_READ_PIO 0x20
+#define ATA_CMD_READ_PIO     0x20
+#define ATA_CMD_WRITE_PIO    0x30
+#define ATA_CMD_CACHE_FLUSH  0xE7
 
 // Which drive we found — set once by ata_init()
 static uint8_t ata_drive = ATA_SLAVE; // default to slave since CD is master
@@ -99,6 +101,36 @@ int ata_read(uint32_t lba, uint8_t count, uint8_t* buf) {
         for (int i = 0; i < 256; i++) {
             ptr[i] = ata_read_word();
         }
+    }
+
+    return 0;
+}
+
+// ── Public write ──────────────────────────────────────────────────────────────
+
+int ata_write(uint32_t lba, uint8_t count, const uint8_t* buf) {
+    if (ata_wait_bsy() != 0) return -1;
+
+    outPortB(ATA_DRIVE_HEAD,   ata_drive | ((lba >> 24) & 0x0F));
+    outPortB(ATA_ERROR,        0x00);
+    outPortB(ATA_SECTOR_COUNT, count);
+    outPortB(ATA_LBA_LOW,      (uint8_t)(lba));
+    outPortB(ATA_LBA_MID,      (uint8_t)(lba >> 8));
+    outPortB(ATA_LBA_HIGH,     (uint8_t)(lba >> 16));
+    outPortB(ATA_COMMAND,      ATA_CMD_WRITE_PIO);
+
+    for (uint8_t s = 0; s < count; s++) {
+        if (ata_wait_bsy() != 0) return -1;
+        if (ata_wait_drq() != 0) return -1;
+
+        const uint16_t* ptr = (const uint16_t*)(buf + s * 512);
+        for (int i = 0; i < 256; i++) {
+            outPortW(ATA_DATA, ptr[i]);
+        }
+
+        // Flush cache after each sector write (standard practice)
+        outPortB(ATA_COMMAND, ATA_CMD_CACHE_FLUSH);
+        if (ata_wait_bsy() != 0) return -1;
     }
 
     return 0;

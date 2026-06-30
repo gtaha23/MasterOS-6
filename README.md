@@ -20,9 +20,9 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 
 # Updates / Logs
 - v0.6.4 Iron version
-- kernel updated
-- shell updated
-- mfetch added
+- renaming files added
+- creation/deletion of files added
+- filesystem commands added
 
 # Spoilers
 - More commands going to be added

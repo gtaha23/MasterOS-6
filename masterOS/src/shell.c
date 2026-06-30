@@ -6,12 +6,12 @@
 extern uint32_t total_mem_kb;  // set in kernel.c at boot
 
 
-// ─── Buffer ───
+// ─── Buffer ───────────────────────────────────────────────────────────────────
 
 static char shell_buf[SHELL_BUFFER_SIZE];
 static int  shell_len = 0;
 
-// ─── String helpers ───
+// ─── String helpers ───────────────────────────────────────────────────────────
 
 static int k_strlen(const char* s) {
     int i = 0; while (s[i]) i++; return i;
@@ -44,7 +44,7 @@ static void print_uint(uint32_t n) {
     }
 }
 
-// ─── Commands ───
+// ─── Commands ─────────────────────────────────────────────────────────────────
 
 static void cmd_help() {
     print("MasterOS Shell Commands:\r\n");
@@ -55,7 +55,11 @@ static void cmd_help() {
     print("  dir        - List files on disk\r\n");
     print("  type <file>- Print file contents\r\n");
     print("  mfetch     - Show system info\r\n");
+    print("  del <file> - Delete a file\r\n");
+    print("  ren <a> <b>- Rename a file\r\n");
+    print("  copy <a> <b>- Copy a file\r\n");
     print("  halt       - Halt the system\r\n");
+    print("  create <file> <context> - Creates a file with the given context\r\n");
 }
 
 static void cmd_cls()              { Reset(); }
@@ -114,7 +118,7 @@ static void cmd_type(const char* arg) {
 
 static void cmd_mfetch() {
     print("\r\n");
-    print("   __  __           _             ___  ____  \r\n");
+    print("   __  __           _            ___  ____  \r\n");
     print("  |  \\/  | __ _ ___| |_ ___ _ __ / _ \\/ ___| \r\n");
     print("  | |\\/| |/ _` / __| __/ _ \\ '__| | | \\___ \\ \r\n");
     print("  | |  | | (_| \\__ \\ ||  __/ |  | |_| |___) |\r\n");
@@ -148,7 +152,94 @@ static void cmd_mfetch() {
     print("\r\n");
 }
 
+static void cmd_create(const char* arg) {
+	if (!arg) {
+		print ("Usage: create <filename> <context>\r\n");
+		return;
+	}
 
+	char filename[32];
+	k_first_word(arg, filename, 32);
+	const char* context = k_arg(arg);
+	const uint8_t* file_data = (const uint8_t*)context;
+
+	int context_len = k_strlen(context);
+	uint32_t context_size = (uint32_t)context_len;
+
+	if (!context) {
+		print ("Usage: create <filename> <context>\r\n");
+		return;
+	}
+
+	fat_write(filename, file_data, context_size);
+	
+}
+
+static void cmd_del(const char* arg) {
+    if (!arg) { print("Usage: del <filename>\r\n"); return; }
+
+    if (fat_delete(arg) == 0) {
+        print("Deleted: ");
+        print(arg);
+        print("\r\n");
+    } else {
+        print("File not found: ");
+        print(arg);
+        print("\r\n");
+    }
+}
+
+static void cmd_ren(const char* arg) {
+    if (!arg) { print("Usage: ren <oldname> <newname>\r\n"); return; }
+
+    char old_name[32];
+    k_first_word(arg, old_name, 32);
+    const char* new_name = k_arg(arg);
+
+    if (!new_name) { print("Usage: ren <oldname> <newname>\r\n"); return; }
+
+    if (fat_rename(old_name, new_name) == 0) {
+        print("Renamed ");
+        print(old_name);
+        print(" to ");
+        print(new_name);
+        print("\r\n");
+    } else {
+        print("File not found: ");
+        print(old_name);
+        print("\r\n");
+    }
+}
+
+static void cmd_copy(const char* arg) {
+    if (!arg) { print("Usage: copy <source> <destination>\r\n"); return; }
+
+    char src_name[32];
+    k_first_word(arg, src_name, 32);
+    const char* dst_name = k_arg(arg);
+
+    if (!dst_name) { print("Usage: copy <source> <destination>\r\n"); return; }
+
+    int bytes = fat_read(src_name, file_buf, sizeof(file_buf));
+    if (bytes < 0) {
+        print("Source not found: ");
+        print(src_name);
+        print("\r\n");
+        return;
+    }
+
+    if (fat_write(dst_name, file_buf, (uint32_t)bytes) == 0) {
+        print("Copied ");
+        print(src_name);
+        print(" to ");
+        print(dst_name);
+        print(" (");
+        print_uint((uint32_t)bytes);
+        print(" bytes)\r\n");
+    } else {
+        print("Copy failed (disk full or error).\r\n");
+    }
+}
 
 void shell_execute(const char* cmd) {
     if (!cmd || cmd[0] == '\0') return;
@@ -165,6 +256,10 @@ void shell_execute(const char* cmd) {
     else if (k_strcmp(verb, "type") == 0) cmd_type(arg);
     else if (k_strcmp(verb, "halt") == 0) cmd_halt();
     else if (k_strcmp(verb, "mfetch") == 0) cmd_mfetch();
+    else if (k_strcmp(verb, "del")    == 0) cmd_del(arg);
+    else if (k_strcmp(verb, "ren")    == 0) cmd_ren(arg);
+    else if (k_strcmp(verb, "copy")   == 0) cmd_copy(arg);
+    else if (k_strcmp(verb, "create")  == 0) cmd_create(arg);
     else {
         print("Unknown command: ");
         print(verb);
@@ -173,7 +268,7 @@ void shell_execute(const char* cmd) {
     }
 }
 
-// ─── Input handler ───
+// ─── Input handler ────────────────────────────────────────────────────────────
 
 void shell_handle_char(char c) {
     if (c == '\n') {
@@ -193,7 +288,7 @@ void shell_handle_char(char c) {
     }
 }
 
-// ─── Init ───
+// ─── Init ─────────────────────────────────────────────────────────────────────
 
 void shell_init() {
     shell_len = 0;

@@ -19,3 +19,7 @@ static inline uint16_t inPortW(uint16_t port) {
     __asm__ volatile ("inw %1, %0" : "=a"(val) : "Nd"(port));
     return val;
 }
+
+static inline void outPortW(uint16_t port, uint16_t val) {
+    __asm__ volatile ("outw %0, %1" : : "a"(val), "Nd"(port));
+}

@@ -8,3 +8,7 @@ int ata_init();
 // Reads 'count' sectors from disk into 'buf' starting at LBA 'lba'.
 // Returns 0 on success, -1 on error.
 int ata_read(uint32_t lba, uint8_t count, uint8_t* buf);
+
+// Writes 'count' sectors from 'buf' to disk starting at LBA 'lba'.
+// Returns 0 on success, -1 on error.
+int ata_write(uint32_t lba, uint8_t count, const uint8_t* buf);

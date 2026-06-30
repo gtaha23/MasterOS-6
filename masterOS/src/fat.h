@@ -29,3 +29,12 @@ uint32_t fat_get_total_kb();
 // Returns approximate used space in KB (sums root dir file sizes)
 uint32_t fat_get_used_kb();
 
+// Delete a file by name. Returns 0 on success, -1 if not found / error.
+int fat_delete(const char* name);
+
+// Rename a file. Returns 0 on success, -1 on error/not found.
+int fat_rename(const char* old_name, const char* new_name);
+
+// Write a new file (or overwrite an existing one). Returns 0 on success, -1 on error.
+int fat_write(const char* name, const uint8_t* data, uint32_t size);
+
