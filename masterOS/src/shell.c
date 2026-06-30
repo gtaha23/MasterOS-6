@@ -3,6 +3,9 @@
 #include "stdlib/stdio.h"
 #include "fat.h"
 
+extern uint32_t total_mem_kb;  // set in kernel.c at boot
+
+
 // ─── Buffer ───
 
 static char shell_buf[SHELL_BUFFER_SIZE];
@@ -51,11 +54,12 @@ static void cmd_help() {
     print("  ver        - Show OS version\r\n");
     print("  dir        - List files on disk\r\n");
     print("  type <file>- Print file contents\r\n");
+    print("  mfetch     - Show system info\r\n");
     print("  halt       - Halt the system\r\n");
 }
 
 static void cmd_cls()              { Reset(); }
-static void cmd_ver()              { print("MasterOS v0.6.3 Kemal\r\n"); }
+static void cmd_ver()              { print("MasterOS v0.6.4 Iron\r\n"); }
 
 static void cmd_echo(const char* arg) {
     if (arg) { print(arg); print("\r\n"); }
@@ -108,7 +112,43 @@ static void cmd_type(const char* arg) {
     print("\r\n");
 }
 
-// ─── Dispatcher ───
+static void cmd_mfetch() {
+    print("\r\n");
+    print("   __  __           _             ___  ____  \r\n");
+    print("  |  \\/  | __ _ ___| |_ ___ _ __ / _ \\/ ___| \r\n");
+    print("  | |\\/| |/ _` / __| __/ _ \\ '__| | | \\___ \\ \r\n");
+    print("  | |  | | (_| \\__ \\ ||  __/ |  | |_| |___) |\r\n");
+    print("  |_|  |_|\\__,_|___/\\__\\___|_|   \\___/|____/ \r\n");
+    print("\r\n");
+    print("  OS:      MasterOS v0.6.4 \"Iron\"\r\n");
+    print("  Kernel:  Custom x86 (32-bit)\r\n");
+    print("  Shell:   mShell\r\n");
+    print("  Memory:  ");
+    print_uint(total_mem_kb);
+    print(" KB\r\n");
+
+    uint32_t total_kb = fat_get_total_kb();
+    uint32_t used_kb   = fat_get_used_kb();
+    uint32_t free_kb    = (total_kb > used_kb) ? (total_kb - used_kb) : 0;
+
+    Fat12Entry entries[FAT_MAX_FILES];
+    int file_count = fat_list(entries, FAT_MAX_FILES);
+    if (file_count < 0) file_count = 0;
+
+    print("  Disk:    FAT12/16, ");
+    print_uint(used_kb);
+    print(" KB used / ");
+    print_uint(total_kb);
+    print(" KB total (");
+    print_uint(free_kb);
+    print(" KB free)\r\n");
+    print("  Files:   ");
+    print_uint(file_count);
+    print(" file(s) in root\r\n");
+    print("\r\n");
+}
+
+
 
 void shell_execute(const char* cmd) {
     if (!cmd || cmd[0] == '\0') return;
@@ -124,6 +164,7 @@ void shell_execute(const char* cmd) {
     else if (k_strcmp(verb, "dir")  == 0) cmd_dir();
     else if (k_strcmp(verb, "type") == 0) cmd_type(arg);
     else if (k_strcmp(verb, "halt") == 0) cmd_halt();
+    else if (k_strcmp(verb, "mfetch") == 0) cmd_mfetch();
     else {
         print("Unknown command: ");
         print(verb);
@@ -152,7 +193,7 @@ void shell_handle_char(char c) {
     }
 }
 
-// ─── Init ────
+// ─── Init ───
 
 void shell_init() {
     shell_len = 0;

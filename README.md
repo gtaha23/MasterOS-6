@@ -19,14 +19,13 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 - Note: !! This statistics are tested !!
 
 # Updates / Logs
-- v0.6.3 Kemal version
+- v0.6.4 Iron version
 - kernel updated
-- shell added
-- fat12 filesystem added
+- shell updated
+- mfetch added
 
 # Spoilers
-- FILESYSTEM ADDED !!
-- A shell has been created.
+- More commands going to be added
 
 # Want to help us?
 You can reach us from our e-mails to join our project and contribute to the mOS projects!
@@ -37,3 +36,6 @@ You can reach us from our e-mails to join our project and contribute to the mOS 
 
 - The version being checked <br />
 ![version command](image-3.png)
+
+- The famous oldfetch command renamed to mfetch <br />
+![mfetch command](image-2.png)

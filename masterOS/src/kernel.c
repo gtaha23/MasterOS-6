@@ -12,9 +12,12 @@
 #include "ata.h"
 #include "fat.h"
 
+uint32_t total_mem_kb = 0;
+
 void kmain(uint32_t magic, struct multiboot_info* bootInfo);
 
 void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
+	total_mem_kb = bootInfo->mem_upper;
     Reset();
     print("Welcome to MasterOS!\r\n");
     initGDT();
@@ -29,7 +32,7 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
     initMemory(bootInfo->mem_upper * 1024, physicalAllocStart);
     print("Memory Allocation [DONE]\r\n");
     kmallocInit(0x1000);
-
+    
     if (ata_init() == 0)
         print("ATA [DONE]\r\n");
     else

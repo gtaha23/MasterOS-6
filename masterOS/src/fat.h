@@ -22,3 +22,10 @@ int fat_list(Fat12Entry* entries, int max);
 // Read a file by name (e.g. "HELLO.TXT") into buf (max buf_size bytes)
 // Returns bytes read, or -1 if not found / error
 int fat_read(const char* name, uint8_t* buf, uint32_t buf_size);
+
+// Returns total disk capacity in KB
+uint32_t fat_get_total_kb();
+
+// Returns approximate used space in KB (sums root dir file sizes)
+uint32_t fat_get_used_kb();
+

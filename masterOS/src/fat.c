@@ -1,7 +1,7 @@
 #include "fat.h"
 #include "ata.h"
 
-// ── BPB (BIOS Parameter Block) ────────────────────────────────────────────────
+// ── BPB (BIOS Parameter Block) ───
 // Sits in the first sector of the disk (the boot sector)
 
 typedef struct __attribute__((packed)) {
@@ -21,7 +21,7 @@ typedef struct __attribute__((packed)) {
     uint32_t total_sectors_32;
 } BPB;
 
-// ── Raw 32-byte directory entry ───────────────────────────────────────────────
+// ── Raw 32-byte directory entry ───
 
 typedef struct __attribute__((packed)) {
     uint8_t  name[8];
@@ -34,7 +34,7 @@ typedef struct __attribute__((packed)) {
     uint32_t file_size;
 } RawDirEntry;
 
-// ── State (filled by fat_init) ──────────────────────────────────────────────
+// ── State (filled by fat_init) ───
 
 static BPB    bpb;
 static int    initialized = 0;
@@ -44,11 +44,11 @@ static uint32_t root_start;      // LBA of root directory
 static uint32_t data_start;      // LBA of first data cluster
 static uint32_t root_sectors;    // sectors occupied by root dir
 
-// ── Sector buffer (one sector at a time to keep stack usage low) ──────────────
+// ── Sector buffer (one sector at a time to keep stack usage low) ───
 
 static uint8_t sector_buf[512];
 
-// ── String helpers ────────────────────────────────────────────────────────────
+// ── String helpers ───
 
 static int k_toupper(int c) {
     return (c >= 'a' && c <= 'z') ? c - 32 : c;
@@ -110,7 +110,7 @@ static void split_83(const char* name, char out_name[8], char out_ext[3]) {
     }
 }
 
-// ── FAT cluster chain ───────────────────────────────────────────────────────
+// ── FAT cluster chain ───
 
 // FAT needs 1.5 bytes per entry — read it properly
 // fat_buf must be the entire FAT (sectors_per_fat * 512 bytes)
@@ -128,7 +128,7 @@ static uint16_t fat_next_cluster(const uint8_t* fat_buf, uint16_t cluster) {
     return val;
 }
 
-// ── Public API ────────────────────────────────────────────────────────────────
+// ── Public API ───
 
 int fat_init() {
     // Read boot sector (LBA 0)
@@ -147,6 +147,45 @@ int fat_init() {
 
     initialized = 1;
     return 0;
+}
+
+// Total disk capacity in KB, from the BPB
+uint32_t fat_get_total_kb() {
+    if (!initialized) return 0;
+
+    uint32_t total_sectors = bpb.total_sectors_16
+                              ? bpb.total_sectors_16
+                              : bpb.total_sectors_32;
+
+    return (total_sectors * bpb.bytes_per_sector) / 1024;
+}
+
+// Used space in KB — sums up file sizes in the root directory
+// (Note: only accounts for root dir files, not subdirectories)
+uint32_t fat_get_used_kb() {
+    if (!initialized) return 0;
+
+    uint32_t used_bytes = 0;
+
+    for (uint32_t s = 0; s < root_sectors; s++) {
+        if (ata_read(root_start + s, 1, sector_buf) != 0) return 0;
+
+        RawDirEntry* dir = (RawDirEntry*)sector_buf;
+        int entries_per_sector = 512 / 32;
+
+        for (int i = 0; i < entries_per_sector; i++) {
+            uint8_t first = dir[i].name[0];
+            if (first == 0x00) goto done;
+            if (first == 0xE5) continue;
+            if (dir[i].attributes & 0x08) continue; // volume label
+            if (dir[i].attributes & 0x10) continue; // directory
+
+            used_bytes += dir[i].file_size;
+        }
+    }
+
+done:
+    return used_bytes / 1024;
 }
 
 int fat_list(Fat12Entry* entries, int max) {
@@ -182,7 +221,7 @@ done:
 int fat_read(const char* name, uint8_t* buf, uint32_t buf_size) {
     if (!initialized) return -1;
 
-    // ── Step 1: find the file in root directory ───────────────────────────────
+    // ── Step 1: find the file in root directory ───
     RawDirEntry found;
     int file_found = 0;
 
@@ -215,7 +254,7 @@ int fat_read(const char* name, uint8_t* buf, uint32_t buf_size) {
 search_done:
     if (!file_found) return -1;
 
-    // ── Step 2: load FAT one sector at a time ─────────────────────────────────
+    // ── Step 2: load FAT one sector at a time ───
     // Max FAT FAT size = 9 sectors on a 1.44MB floppy
     static uint8_t fat_buf[18 * 512]; // 18 sectors = safe upper bound
     uint32_t fat_secs = bpb.sectors_per_fat;
@@ -225,7 +264,7 @@ search_done:
         if (ata_read(fat_start + s, 1, fat_buf + s * 512) != 0) return -1;
     }
 
-    // ── Step 3: walk cluster chain and copy data ───────────────────────────────
+    // ── Step 3: walk cluster chain and copy data ───
     uint32_t bytes_read = 0;
     uint16_t cluster   = found.first_cluster;
     uint32_t file_size = found.file_size;
