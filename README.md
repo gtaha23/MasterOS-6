@@ -38,3 +38,6 @@ You can reach us from our e-mails to join our project and contribute to the mOS 
 
 - The famous oldfetch command renamed to mfetch <br />
 ![mfetch command](image-2.png)
+
+- The time being showed (0:5 means 00:05)
+![time command](image-4.png)
