@@ -2,6 +2,7 @@
 #include "vga.h"
 #include "stdlib/stdio.h"
 #include "fat.h"
+#include "rtc.h"
 
 extern uint32_t total_mem_kb;  // set in kernel.c at boot
 
@@ -60,10 +61,11 @@ static void cmd_help() {
     print("  copy <a> <b>- Copy a file\r\n");
     print("  halt       - Halt the system\r\n");
     print("  create <file> <context> - Creates a file with the given context\r\n");
+    print("  time       - Show the current time & date\r\n");
 }
 
 static void cmd_cls()              { Reset(); }
-static void cmd_ver()              { print("MasterOS v0.6.4 Iron\r\n"); }
+static void cmd_ver()              { print("MasterOS v0.6.5 Aero\r\n"); }
 
 static void cmd_echo(const char* arg) {
     if (arg) { print(arg); print("\r\n"); }
@@ -124,7 +126,7 @@ static void cmd_mfetch() {
     print("  | |  | | (_| \\__ \\ ||  __/ |  | |_| |___) |\r\n");
     print("  |_|  |_|\\__,_|___/\\__\\___|_|   \\___/|____/ \r\n");
     print("\r\n");
-    print("  OS:      MasterOS v0.6.4 \"Iron\"\r\n");
+    print("  OS:      MasterOS v0.6.5 \"Aero\"\r\n");
     print("  Kernel:  Custom x86 (32-bit)\r\n");
     print("  Shell:   mShell\r\n");
     print("  Memory:  ");
@@ -241,6 +243,26 @@ static void cmd_copy(const char* arg) {
     }
 }
 
+static void cmd_time() {
+	RTCTime t;
+	rtc_read(&t);
+	t.hours = t.hours + 3;            // ONLY MODIFY THIS SETTING TO MATCH YOUR
+	if (t.hours >= 24) t.hours -= 24; // UTC TIMEZONE (MINE IS +3)
+
+	print_uint(t.hours);
+	print(":");
+	print_uint(t.minutes);
+	
+	print("  ");
+	
+	print_uint(t.day);
+	print("/");
+	print_uint(t.month);
+	print("/");
+	print_uint(t.year);
+	print(" \r\n");
+}
+
 void shell_execute(const char* cmd) {
     if (!cmd || cmd[0] == '\0') return;
 
@@ -260,6 +282,7 @@ void shell_execute(const char* cmd) {
     else if (k_strcmp(verb, "ren")    == 0) cmd_ren(arg);
     else if (k_strcmp(verb, "copy")   == 0) cmd_copy(arg);
     else if (k_strcmp(verb, "create")  == 0) cmd_create(arg);
+    else if (k_strcmp(verb, "time") == 0) cmd_time();
     else {
         print("Unknown command: ");
         print(verb);

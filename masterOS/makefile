@@ -20,6 +20,7 @@ kernel:
 	gcc $(CFLAGS) -c src/fat.c -o fat.o
 	gcc $(CFLAGS) -c src/ata.c -o ata.o
 	gcc $(CFLAGS) -c src/speaker.c -o speaker.o
+	gcc $(CFLAGS) -c src/rtc.c -o rtc.o
 
 bootloader:
 	nasm -f elf32 src/boot.s -o boot.o
@@ -27,7 +28,7 @@ bootloader:
 	nasm -f elf32 src/interrupts/idt.s -o idts.o
 
 iso:
-	ld -m elf_i386 -T linker.ld -o kernel boot.o kernel.o vga.o gdt.o gdts.o util.o idt.o idts.o timer.o stdio.o keyboard.o memory.o kmalloc.o shell.o fat.o ata.o speaker.o
+	ld -m elf_i386 -T linker.ld -o kernel boot.o kernel.o vga.o gdt.o gdts.o util.o idt.o idts.o timer.o stdio.o keyboard.o memory.o kmalloc.o shell.o fat.o ata.o speaker.o rtc.o
 	mv kernel mOS/boot/kernel
 	grub-mkrescue -o kernel.iso mOS/
 	rm *.o
