@@ -1,7 +1,7 @@
 #include "fat.h"
 #include "ata.h"
 
-// ── BPB (BIOS Parameter Block) ────────────────────────────────────────────────
+// ── BPB (BIOS Parameter Block) ───
 // Sits in the first sector of the disk (the boot sector)
 
 typedef struct __attribute__((packed)) {
@@ -21,7 +21,7 @@ typedef struct __attribute__((packed)) {
     uint32_t total_sectors_32;
 } BPB;
 
-// ── Raw 32-byte directory entry ───────────────────────────────────────────────
+// ── Raw 32-byte directory entry ───
 
 typedef struct __attribute__((packed)) {
     uint8_t  name[8];
@@ -34,7 +34,7 @@ typedef struct __attribute__((packed)) {
     uint32_t file_size;
 } RawDirEntry;
 
-// ── State (filled by fat_init) ──────────────────────────────────────────────
+// ── State (filled by fat_init) ───
 
 static BPB    bpb;
 static int    initialized = 0;
@@ -44,11 +44,11 @@ static uint32_t root_start;      // LBA of root directory
 static uint32_t data_start;      // LBA of first data cluster
 static uint32_t root_sectors;    // sectors occupied by root dir
 
-// ── Sector buffer (one sector at a time to keep stack usage low) ──────────────
+// ── Sector buffer (one sector at a time to keep stack usage low) ───
 
 static uint8_t sector_buf[512];
 
-// ── String helpers ────────────────────────────────────────────────────────────
+// ── String helpers ──
 
 static int k_toupper(int c) {
     return (c >= 'a' && c <= 'z') ? c - 32 : c;
@@ -110,7 +110,7 @@ static void split_83(const char* name, char out_name[8], char out_ext[3]) {
     }
 }
 
-// ── FAT cluster chain ───────────────────────────────────────────────────────
+// ── FAT cluster chain ──
 
 // FAT needs 1.5 bytes per entry — read it properly
 // fat_buf must be the entire FAT (sectors_per_fat * 512 bytes)
@@ -128,7 +128,7 @@ static uint16_t fat_next_cluster(const uint8_t* fat_buf, uint16_t cluster) {
     return val;
 }
 
-// ── Public API ────────────────────────────────────────────────────────────────
+// ── Public API ──
 
 int fat_init() {
     // Read boot sector (LBA 0)
@@ -221,7 +221,7 @@ done:
 int fat_read(const char* name, uint8_t* buf, uint32_t buf_size) {
     if (!initialized) return -1;
 
-    // ── Step 1: find the file in root directory ───────────────────────────────
+    // ── Step 1: find the file in root directory ──
     RawDirEntry found;
     int file_found = 0;
 
@@ -254,7 +254,7 @@ int fat_read(const char* name, uint8_t* buf, uint32_t buf_size) {
 search_done:
     if (!file_found) return -1;
 
-    // ── Step 2: load FAT one sector at a time ─────────────────────────────────
+    // ── Step 2: load FAT one sector at a time ───
     // Max FAT FAT size = 9 sectors on a 1.44MB floppy
     static uint8_t fat_buf[18 * 512]; // 18 sectors = safe upper bound
     uint32_t fat_secs = bpb.sectors_per_fat;
@@ -264,7 +264,7 @@ search_done:
         if (ata_read(fat_start + s, 1, fat_buf + s * 512) != 0) return -1;
     }
 
-    // ── Step 3: walk cluster chain and copy data ───────────────────────────────
+    // ── Step 3: walk cluster chain and copy data ─
     uint32_t bytes_read = 0;
     uint16_t cluster   = found.first_cluster;
     uint32_t file_size = found.file_size;
@@ -302,7 +302,7 @@ read_done:
     return (int)bytes_read;
 }
 
-// ── Write support ──────────────────────────────────────────────────────────────
+// ── Write support ──
 
 // Find a free cluster (FAT entry == 0). Returns cluster number, or 0 if none.
 static uint16_t fat_find_free_cluster(uint8_t* fat_buf, uint32_t total_clusters) {
@@ -445,7 +445,7 @@ int fat_write(const char* name, const uint8_t* data, uint32_t size) {
     char want_name[8], want_ext[3];
     split_83(name, want_name, want_ext);
 
-    // ── Load FAT ────────────────────────────────────────────────────────────────
+    // ── Load FAT ──
     static uint8_t fat_buf[18 * 512];
     uint32_t fat_secs = bpb.sectors_per_fat;
     if (fat_secs > 18) fat_secs = 18;
@@ -455,7 +455,7 @@ int fat_write(const char* name, const uint8_t* data, uint32_t size) {
 
     uint32_t total_clusters = (fat_secs * 512 * 2) / 3; // rough, fine for our sizes
 
-    // ── Allocate clusters and write data ───────────────────────────────────────
+    // ── Allocate clusters and write data ──
     uint32_t bytes_per_cluster = bpb.bytes_per_sector * bpb.sectors_per_cluster;
     uint32_t bytes_left = size;
     uint16_t first_cluster = 0;
@@ -493,7 +493,7 @@ int fat_write(const char* name, const uint8_t* data, uint32_t size) {
         prev_cluster = cluster;
     }
 
-    // ── Write FAT back (all copies) ────────────────────────────────────────────
+    // ── Write FAT back (all copies) ───
     for (uint8_t f = 0; f < bpb.fat_count; f++) {
         uint32_t this_fat_start = fat_start + f * bpb.sectors_per_fat;
         for (uint32_t fs = 0; fs < fat_secs; fs++) {
@@ -501,7 +501,7 @@ int fat_write(const char* name, const uint8_t* data, uint32_t size) {
         }
     }
 
-    // ── Find a free directory entry and write it ───────────────────────────────
+    // ── Find a free directory entry and write it ───
     static uint8_t dbuf[512];
     for (uint32_t s = 0; s < root_sectors; s++) {
         if (ata_read(root_start + s, 1, dbuf) != 0) return -1;

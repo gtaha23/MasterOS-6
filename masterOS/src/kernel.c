@@ -11,6 +11,7 @@
 #include "shell.h"
 #include "ata.h"
 #include "fat.h"
+#include "speaker.h"
 
 uint32_t total_mem_kb = 0;
 
@@ -19,6 +20,7 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo);
 void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
 	total_mem_kb = bootInfo->mem_upper;
     Reset();
+    speaker_play(800);
     print("Welcome to MasterOS!\r\n");
     initGDT();
     print("GDT [DONE]\r\n");
@@ -45,6 +47,7 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
 
     shell_init();
     initKeyb();
+    speaker_stop();
 
     print(">");
 

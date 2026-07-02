@@ -6,12 +6,12 @@
 extern uint32_t total_mem_kb;  // set in kernel.c at boot
 
 
-// ─── Buffer ───────────────────────────────────────────────────────────────────
+// ─── Buffer ───
 
 static char shell_buf[SHELL_BUFFER_SIZE];
 static int  shell_len = 0;
 
-// ─── String helpers ───────────────────────────────────────────────────────────
+// ─── String helpers ───
 
 static int k_strlen(const char* s) {
     int i = 0; while (s[i]) i++; return i;
@@ -44,7 +44,7 @@ static void print_uint(uint32_t n) {
     }
 }
 
-// ─── Commands ─────────────────────────────────────────────────────────────────
+// ─── Commands ────
 
 static void cmd_help() {
     print("MasterOS Shell Commands:\r\n");
@@ -118,7 +118,7 @@ static void cmd_type(const char* arg) {
 
 static void cmd_mfetch() {
     print("\r\n");
-    print("   __  __           _            ___  ____  \r\n");
+    print("   __  __           _             ___  ____ \r\n");
     print("  |  \\/  | __ _ ___| |_ ___ _ __ / _ \\/ ___| \r\n");
     print("  | |\\/| |/ _` / __| __/ _ \\ '__| | | \\___ \\ \r\n");
     print("  | |  | | (_| \\__ \\ ||  __/ |  | |_| |___) |\r\n");
@@ -268,7 +268,7 @@ void shell_execute(const char* cmd) {
     }
 }
 
-// ─── Input handler ────────────────────────────────────────────────────────────
+// ─── Input handler ───
 
 void shell_handle_char(char c) {
     if (c == '\n') {
@@ -288,7 +288,7 @@ void shell_handle_char(char c) {
     }
 }
 
-// ─── Init ─────────────────────────────────────────────────────────────────────
+// ─── Init ───
 
 void shell_init() {
     shell_len = 0;
