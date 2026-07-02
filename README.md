@@ -20,9 +20,8 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 
 # Updates / Logs
 - v0.6.4 Iron version
-- renaming files added
-- creation/deletion of files added
-- filesystem commands added
+- speaker (a very primitive) added
+- beep sound added via speaker
 
 # Spoilers
 - More commands going to be added
