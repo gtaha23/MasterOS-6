@@ -3,8 +3,15 @@
 #include "stdlib/stdio.h"
 #include "fat.h"
 #include "rtc.h"
+#include "exec.h"
 
 extern uint32_t total_mem_kb;  // set in kernel.c at boot
+
+#define HISTORY_SIZE 10
+
+static char history[HISTORY_SIZE][SHELL_BUFFER_SIZE];
+static int  history_count = 0;  // how many entries stored
+static int  history_index = -1; // which entry we're browsing (-1 = not browsing)
 
 
 // ─── Buffer ───
@@ -29,13 +36,27 @@ static const char* k_arg(const char* cmd) {
     return 0;
 }
 
+static void k_strcpy(char* dst, const char* src) {
+    while (*src) *dst++ = *src++;
+    *dst = '\0';
+}
+
+static int k_atoi(const char* s) {
+    int result = 0;
+    while (*s >= '0' && *s <= '9') {
+        result = result * 10 + (*s - '0');
+        s++;
+    }
+    return result;
+}
+
 static void k_first_word(const char* src, char* dst, int n) {
     int i = 0;
     while (src[i] && src[i] != ' ' && i < n - 1) { dst[i] = src[i]; i++; }
     dst[i] = '\0';
 }
 
-static void print_uint(uint32_t n) {
+void print_uint(uint32_t n) {
     if (n == 0) { print("0"); return; }
     char tmp[12]; int i = 0;
     while (n) { tmp[i++] = '0' + (n % 10); n /= 10; }
@@ -62,10 +83,13 @@ static void cmd_help() {
     print("  halt       - Halt the system\r\n");
     print("  create <file> <context> - Creates a file with the given context\r\n");
     print("  time       - Show the current time & date\r\n");
+    print("  history    - Shows past runned commands\r\n");
+    print("  color <text> <background> - Changes the text & background color with the given arguments\r\n");
+    print("  run <program> - Runs the given .COM program\r\n");
 }
 
 static void cmd_cls()              { Reset(); }
-static void cmd_ver()              { print("MasterOS v0.6.5 Aero\r\n"); }
+static void cmd_ver()              { print("MasterOS v0.6.6 Terra\r\n"); }
 
 static void cmd_echo(const char* arg) {
     if (arg) { print(arg); print("\r\n"); }
@@ -75,6 +99,27 @@ static void cmd_echo(const char* arg) {
 static void cmd_halt() {
     print("System halted. You can power off now.\r\n");
     for (;;) { __asm__ volatile ("hlt"); }
+}
+
+static void history_save(const char* cmd) {
+    for (int i = history_count; i > 0; i--) {
+        k_strcpy(history[i], history[i-1]);
+    }
+    k_strcpy(history[0], cmd);
+    if (history_count < HISTORY_SIZE) history_count++;
+}
+
+static void cmd_history() {
+	if (history_count < 1) {
+		print("No history yet...\r\n");
+		return;
+	}
+    for (int x = 0; x < history_count; x++){
+    	print_uint(x);
+    	print(" ");
+    	print(history[x]);
+    	print("\r\n");
+    }
 }
 
 static void cmd_dir() {
@@ -126,7 +171,7 @@ static void cmd_mfetch() {
     print("  | |  | | (_| \\__ \\ ||  __/ |  | |_| |___) |\r\n");
     print("  |_|  |_|\\__,_|___/\\__\\___|_|   \\___/|____/ \r\n");
     print("\r\n");
-    print("  OS:      MasterOS v0.6.5 \"Aero\"\r\n");
+    print("  OS:      MasterOS v0.6.6 \"Terra\"\r\n");
     print("  Kernel:  Custom x86 (32-bit)\r\n");
     print("  Shell:   mShell\r\n");
     print("  Memory:  ");
@@ -134,16 +179,16 @@ static void cmd_mfetch() {
     print(" KB\r\n");
 
     uint32_t total_kb = fat_get_total_kb();
-    uint32_t used_kb   = fat_get_used_kb();
-    uint32_t free_kb    = (total_kb > used_kb) ? (total_kb - used_kb) : 0;
+    uint32_t used_bytes   = fat_get_used_kb();
+    uint32_t free_kb   = (total_kb * 1024 > used_bytes) ? (total_kb - (used_bytes / 1024)) : 0;
 
     Fat12Entry entries[FAT_MAX_FILES];
     int file_count = fat_list(entries, FAT_MAX_FILES);
     if (file_count < 0) file_count = 0;
 
     print("  Disk:    FAT12/16, ");
-    print_uint(used_kb);
-    print(" KB used / ");
+    print_uint(used_bytes);
+    print(" Bytes used / ");
     print_uint(total_kb);
     print(" KB total (");
     print_uint(free_kb);
@@ -175,6 +220,18 @@ static void cmd_create(const char* arg) {
 
 	fat_write(filename, file_data, context_size);
 	
+}
+
+static void cmd_color(const char* arg) {
+	if (!arg) { print("Usage: color <text> <background>\r\n"); return; }
+
+	int fg = k_atoi(arg);           
+	const char* bg_str = k_arg(arg);
+	if (!bg_str) { print("Usage: color <text> <background>\r\n"); return; }
+	        
+	int bg = k_atoi(bg_str);       
+	
+	set_color(fg, bg);
 }
 
 static void cmd_del(const char* arg) {
@@ -243,6 +300,11 @@ static void cmd_copy(const char* arg) {
     }
 }
 
+static void cmd_run(const char* arg){
+	if (!arg) { print("Usage: run <program.com>\r\n"); return; }
+	exec_run(arg);
+}
+
 static void cmd_time() {
 	RTCTime t;
 	rtc_read(&t);
@@ -283,6 +345,9 @@ void shell_execute(const char* cmd) {
     else if (k_strcmp(verb, "copy")   == 0) cmd_copy(arg);
     else if (k_strcmp(verb, "create")  == 0) cmd_create(arg);
     else if (k_strcmp(verb, "time") == 0) cmd_time();
+    else if (k_strcmp(verb, "history") == 0) cmd_history();
+    else if (k_strcmp(verb, "color") == 0) cmd_color(arg);
+    else if (k_strcmp(verb, "run") == 0) cmd_run(arg);
     else {
         print("Unknown command: ");
         print(verb);
@@ -297,6 +362,7 @@ void shell_handle_char(char c) {
     if (c == '\n') {
         shell_buf[shell_len] = '\0';
         print("\r\n");
+        if (shell_len > 0) history_save(shell_buf);
         shell_execute(shell_buf);
         shell_len = 0;
         print(">");

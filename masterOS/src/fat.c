@@ -185,7 +185,7 @@ uint32_t fat_get_used_kb() {
     }
 
 done:
-    return used_bytes / 1024;
+    return used_bytes;
 }
 
 int fat_list(Fat12Entry* entries, int max) {

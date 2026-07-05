@@ -25,3 +25,5 @@ void print(const char* s);
 void scrollUp();
 void newLine();
 void Reset();
+void set_color(uint8_t fg, uint8_t bg);
+void reset_color();

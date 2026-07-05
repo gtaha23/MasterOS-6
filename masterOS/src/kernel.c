@@ -12,6 +12,7 @@
 #include "ata.h"
 #include "fat.h"
 #include "speaker.h"
+#include "util.h"
 
 uint32_t total_mem_kb = 0;
 
@@ -28,8 +29,7 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
     print("IDT [DONE]\r\n");
     initTimer();
 
-    uint32_t mod1 = *(uint32_t*)(bootInfo->mods_addr + 4);
-    uint32_t physicalAllocStart = (mod1 + 0xFF) & ~0xFFF;
+    uint32_t physicalAllocStart = 0x200000;
 
     initMemory(bootInfo->mem_upper * 1024, physicalAllocStart);
     print("Memory Allocation [DONE]\r\n");
@@ -47,6 +47,9 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
 
     shell_init();
     initKeyb();
+    print("Alloc start: ");
+    print_uint(physicalAllocStart);
+    print("\r\n");
     speaker_stop();
 
     print(">");

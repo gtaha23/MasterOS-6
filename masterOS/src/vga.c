@@ -9,7 +9,6 @@ uint16_t currColor = defaultColor;
 void Reset() {
 	line = 0;
 	column = 0;
-	currColor = defaultColor;
 
 	for (uint16_t y = 0; y < height; y++) {
 		for (uint16_t x = 0; x < width; x++) {
@@ -26,6 +25,14 @@ void newLine() {
 		scrollUp();
 		column = 0;
 	}
+}
+
+void reset_color()  {
+	currColor = defaultColor;
+}
+
+void set_color(uint8_t fg, uint8_t bg) {
+	currColor = ((fg & 0x0F) << 8) | ((bg & 0x0F) << 12);
 }
 
 void scrollUp() {

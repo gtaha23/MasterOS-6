@@ -19,9 +19,9 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 - Note: !! This statistics are tested !!
 
 # Updates / Logs
-- v0.6.4 Iron version
-- speaker (a very primitive) added
-- beep sound added via speaker
+- v0.6.6 Terra version
+- .COM programs can be runned
+- shell fixes
 
 # Spoilers
 - More commands going to be added
