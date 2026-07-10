@@ -20,7 +20,7 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 
 # Updates / Logs
 - v0.6.6 Terra version
-- nothing new in case of user software
+- Makefile fixes
 - Files management
 
 # Spoilers

@@ -99,7 +99,7 @@ void setIDTGate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags) {
 	
 }
 
-unsigned char* exception_messages[] =  {
+const char* exception_messages[] =  {
 	"Divison By Zero",
 	"Debug",
 	"Not Maskable Interrupt",

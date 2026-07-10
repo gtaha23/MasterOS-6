@@ -19,6 +19,7 @@ uint32_t total_mem_kb = 0;
 void kmain(uint32_t magic, struct multiboot_info* bootInfo);
 
 void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
+    (void)magic;
 	total_mem_kb = bootInfo->mem_upper;
     Reset();
     speaker_play(800);

@@ -8,6 +8,7 @@ uint64_t ticks;
 const uint32_t freq = 100;
 
 void onIrq0(struct InterruptRegisters *regs){
+    (void)regs;
     ticks += 1;
 
 }

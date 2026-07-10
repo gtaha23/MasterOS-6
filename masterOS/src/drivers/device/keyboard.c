@@ -72,6 +72,7 @@ void initKeyb(){
 }
 
 void keybHandler(struct InterruptRegisters *regs){
+    (void)regs;
     char scanCode = inPortB(0x60) & 0x7F;
     char press    = inPortB(0x60) & 0x80;
 
@@ -96,8 +97,8 @@ void keybHandler(struct InterruptRegisters *regs){
         default:
             if (press == 0) {
                 uint32_t key = (capsOn || capsLock)
-                               ? uppercase[scanCode]
-                               : lowercase[scanCode];
+                               ? uppercase[(uint8_t)scanCode]
+                               : lowercase[(uint8_t)scanCode];
 
                 // Only forward printable ASCII, backspace, and newline
                 if (key < 0x80 || key == '\b' || key == '\n') {
