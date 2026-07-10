@@ -1,9 +1,9 @@
 #include "stdint.h"
-#include "interrupts/idt.h"
-#include "util.h"
-#include "stdlib/stdio.h"
+#include "../../interrupts/idt.h"
+#include "../../memory/util.h"
+#include "../../stdlib/stdio.h"
 #include "keyboard.h"
-#include "shell.h"          // <-- new
+#include "../../shell.h"
 
 bool capsOn;
 bool capsLock;

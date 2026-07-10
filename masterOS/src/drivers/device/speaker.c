@@ -1,5 +1,5 @@
 #include "speaker.h"
-#include "util.h"
+#include "../../memory/util.h"
 
 void speaker_play(uint32_t freq) { 
 	uint32_t div = 1193180 / freq;

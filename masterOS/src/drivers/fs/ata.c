@@ -1,5 +1,5 @@
 #include "ata.h"
-#include "util.h"
+#include "../../memory/util.h"
 
 // ── ATA Primary Bus Ports ─────────────────────────────────────────────────────
 #define ATA_DATA         0x1F0

@@ -20,8 +20,8 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 
 # Updates / Logs
 - v0.6.6 Terra version
-- .COM programs can be runned
-- shell fixes
+- nothing new in case of user software
+- Files management
 
 # Spoilers
 - More commands going to be added

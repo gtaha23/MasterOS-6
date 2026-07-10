@@ -1,5 +1,5 @@
 #include "rtc.h"
-#include "util.h"
+#include "memory/util.h"
 
 static uint8_t rtc_read_reg(uint8_t reg) {
 	outPortB(0x70, reg);

@@ -1,6 +1,6 @@
 #include "stdint.h"
-#include "multiboot.h"
-#include "stdlib/stdio.h"
+#include "../multiboot.h"
+#include "../stdlib/stdio.h"
 #include "util.h"
 #include "memory.h"
 

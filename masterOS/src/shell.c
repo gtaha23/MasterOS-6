@@ -1,9 +1,9 @@
 #include "shell.h"
-#include "vga.h"
+#include "drivers/vga.h"
 #include "stdlib/stdio.h"
-#include "fat.h"
+#include "drivers/fs/fat.h"
 #include "rtc.h"
-#include "exec.h"
+#include "drivers/device/exec.h"
 
 extern uint32_t total_mem_kb;  // set in kernel.c at boot
 
@@ -165,11 +165,12 @@ static void cmd_type(const char* arg) {
 
 static void cmd_mfetch() {
     print("\r\n");
-    print("   __  __           _             ___  ____ \r\n");
-    print("  |  \\/  | __ _ ___| |_ ___ _ __ / _ \\/ ___| \r\n");
-    print("  | |\\/| |/ _` / __| __/ _ \\ '__| | | \\___ \\ \r\n");
-    print("  | |  | | (_| \\__ \\ ||  __/ |  | |_| |___) |\r\n");
-    print("  |_|  |_|\\__,_|___/\\__\\___|_|   \\___/|____/ \r\n");
+    print("                     ########  ######## \r\n");
+    print(" ######## #####    ###    ### ###    ## \r\n");
+    print("  ######### ####  ##      ### ######    \r\n");
+    print("  ###  ###  #### ###     ###    ######  \r\n");
+    print(" ###  ###  #### ##     ### ##    ####   \r\n");
+    print(" ################ ########  ########    \r\n");
     print("\r\n");
     print("  OS:      MasterOS v0.6.6 \"Terra\"\r\n");
     print("  Kernel:  Custom x86 (32-bit)\r\n");

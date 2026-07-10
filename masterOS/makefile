@@ -7,21 +7,21 @@ clean:
 
 kernel:
 	gcc $(CFLAGS) -c src/kernel.c -o kernel.o
-	gcc $(CFLAGS) -c src/vga.c -o vga.o
-	gcc $(CFLAGS) -c src/gdt.c -o gdt.o
-	gcc $(CFLAGS) -c src/util.c -o util.o
+	gcc $(CFLAGS) -c src/drivers/vga.c -o vga.o
+	gcc $(CFLAGS) -c src/drivers/gdt.c -o gdt.o
+	gcc $(CFLAGS) -c src/memory/util.c -o util.o
 	gcc $(CFLAGS) -c src/interrupts/idt.c -o idt.o
 	gcc $(CFLAGS) -c src/timer.c -o timer.o
 	gcc $(CFLAGS) -c src/stdlib/stdio.c -o stdio.o
-	gcc $(CFLAGS) -c src/keyboard.c -o keyboard.o
-	gcc $(CFLAGS) -c src/memory.c -o memory.o
-	gcc $(CFLAGS) -c src/kmalloc.c -o kmalloc.o
+	gcc $(CFLAGS) -c src/drivers/device/keyboard.c -o keyboard.o
+	gcc $(CFLAGS) -c src/memory/memory.c -o memory.o
+	gcc $(CFLAGS) -c src/memory/kmalloc.c -o kmalloc.o
 	gcc $(CFLAGS) -c src/shell.c -o shell.o
-	gcc $(CFLAGS) -c src/fat.c -o fat.o
-	gcc $(CFLAGS) -c src/ata.c -o ata.o
-	gcc $(CFLAGS) -c src/speaker.c -o speaker.o
+	gcc $(CFLAGS) -c src/drivers/fs/fat.c -o fat.o
+	gcc $(CFLAGS) -c src/drivers/fs/ata.c -o ata.o
+	gcc $(CFLAGS) -c src/drivers/device/speaker.c -o speaker.o
 	gcc $(CFLAGS) -c src/rtc.c -o rtc.o
-	gcc $(CFLAGS) -c src/exec.c -o exec.o
+	gcc $(CFLAGS) -c src/drivers/device/exec.c -o exec.o
 
 bootloader:
 	nasm -f elf32 src/boot.s -o boot.o

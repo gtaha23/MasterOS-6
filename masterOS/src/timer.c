@@ -1,7 +1,7 @@
 #include "stdint.h"
-#include "util.h"
+#include "memory/util.h"
 #include "interrupts/idt.h"
-#include "vga.h"
+#include "drivers/vga.h"
 #include "timer.h"
 
 uint64_t ticks;
