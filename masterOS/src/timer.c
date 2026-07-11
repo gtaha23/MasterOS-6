@@ -13,6 +13,10 @@ void onIrq0(struct InterruptRegisters *regs){
 
 }
 
+uint32_t GUS(){
+    return (uint32_t)(ticks / 100);
+}
+
 void initTimer(){
     ticks = 0;
     irq_install_handler(0,&onIrq0);

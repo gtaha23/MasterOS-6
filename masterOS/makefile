@@ -26,6 +26,8 @@ kernel:
 	$(CC) $(CFLAGS) -c src/drivers/device/speaker.c -o speaker.o
 	$(CC) $(CFLAGS) -c src/rtc.c -o rtc.o
 	$(CC) $(CFLAGS) -c src/drivers/device/exec.c -o exec.o
+	$(CC) $(CFLAGS) -c src/drivers/device/cpu.c -o cpu.o
+	$(CC) $(CFLAGS) -c src/power.c -o power.o
 
 bootloader:
 	$(AS) -f elf32 src/boot.s -o boot.o
@@ -33,7 +35,7 @@ bootloader:
 	$(AS) -f elf32 src/interrupts/idt.s -o idts.o
 
 iso:
-	$(LD) -m elf_i386 -T linker.ld -o kernel boot.o kernel.o vga.o gdt.o gdts.o util.o idt.o idts.o timer.o stdio.o keyboard.o memory.o kmalloc.o shell.o fat.o ata.o speaker.o rtc.o exec.o
+	$(LD) -m elf_i386 -T linker.ld -o kernel boot.o kernel.o vga.o gdt.o gdts.o util.o idt.o idts.o timer.o stdio.o keyboard.o memory.o kmalloc.o shell.o fat.o ata.o speaker.o rtc.o exec.o cpu.o power.o
 	mv kernel mOS/boot/kernel
 	grub-mkrescue -o kernel.iso mOS/
 	rm *.o

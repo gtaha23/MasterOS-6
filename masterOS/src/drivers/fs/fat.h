@@ -9,6 +9,7 @@ typedef struct {
     char name[FAT_NAME_LEN];  // e.g. "HELLO.TXT"
     uint32_t size;              // file size in bytes
     uint16_t first_cluster;     // starting cluster
+    uint8_t is_dir;             // 1 if directory, 0 if file
 } Fat12Entry;
 
 // Initialize FAT — reads the BPB from disk
@@ -37,4 +38,3 @@ int fat_rename(const char* old_name, const char* new_name);
 
 // Write a new file (or overwrite an existing one). Returns 0 on success, -1 on error.
 int fat_write(const char* name, const uint8_t* data, uint32_t size);
-

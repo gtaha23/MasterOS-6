@@ -4,8 +4,12 @@
 #include "drivers/fs/fat.h"
 #include "rtc.h"
 #include "drivers/device/exec.h"
+#include "drivers/device/cpu.h"
+#include "timer.h"
+#include "power.h"
 
 extern uint32_t total_mem_kb;  // set in kernel.c at boot
+static char prompt_name[32] = "user";  // default
 
 #define HISTORY_SIZE 10
 
@@ -66,6 +70,21 @@ void print_uint(uint32_t n) {
     }
 }
 
+static void cmd_setprompt(const char* arg) {
+    if (!arg) { print("Usage: setprompt <name>\r\n"); return; }
+    k_strcpy(prompt_name, arg);
+}
+
+void print_prompt() {
+    set_color(2, 0);  print(prompt_name);
+    set_color(7, 0);  print("@");
+    set_color(10, 0); print("MasterOS");
+    set_color(7, 0);  print(":");
+    set_color(14, 0); print(fat_get_current_path());
+    set_color(7, 0);  print("> ");
+    reset_color();
+}
+
 // ─── Commands ────
 
 static void cmd_help() {
@@ -84,16 +103,66 @@ static void cmd_help() {
     print("  create <file> <context> - Creates a file with the given context\r\n");
     print("  time       - Show the current time & date\r\n");
     print("  history    - Shows past runned commands\r\n");
-    print("  color <text> <background> - Changes the text & background color with the given arguments\r\n");
+    print("  color <text> <background> - Changes the text & background color\r\n");
     print("  run <program> - Runs the given .COM program\r\n");
+    print("  cpuid      - Shows CPU vendor string\r\n");
+    print("  reboot     - Reboots the system\r\n");
+    print("  shutdown   - Shuts down the system\r\n");
+    print("  setprompt <name> - Sets the shell prompt name\r\n");
+    print("  cd <dirname> - Change directory\r\n");
+    print("  mkdir <dirname> - Create a directory\r\n");
+    print("  rmdir <dirname> - Remove a directory\r\n");
 }
 
 static void cmd_cls()              { Reset(); }
-static void cmd_ver()              { print("MasterOS v0.6.6 Terra\r\n"); }
+static void cmd_ver()              { print("MasterOS v0.6.7 \"Spatium\"\r\n"); }
 
 static void cmd_echo(const char* arg) {
     if (arg) { print(arg); print("\r\n"); }
     else      { print("\r\n"); }
+}
+
+static void cmd_cd(const char* arg) {
+    if (!arg) { print("Usage: cd <dirname>\r\n"); return; }
+    if (fat_cd(arg) != 0) {
+        print("Directory not found: ");
+        print(arg);
+        print("\r\n");
+    }
+}
+
+static void cmd_mkdir(const char* arg) {
+    if (!arg) { print("Usage: mkdir <dirname>\r\n"); return; }
+    if (fat_mkdir(arg) == 0) {
+        print("Created: ");
+        print(arg);
+        print("\r\n");
+    } else {
+        print("Failed to create directory.\r\n");
+    }
+}
+
+static void cmd_rmdir(const char* arg) {
+    if (!arg) { print("Usage: rmdir <dirname>\r\n"); return; }
+    if (fat_rmdir(arg) == 0) {
+        print("Removed: ");
+        print(arg);
+        print("\r\n");
+    } else {
+        print("Directory not found: ");
+        print(arg);
+        print("\r\n");
+    }
+}
+
+static void cmd_reboot() {
+    print("Rebooting...\r\n");
+    reboot();
+}
+
+static void cmd_shutdown() {
+    print("Shutting down...\r\n");
+    shutdown();
 }
 
 static void cmd_halt() {
@@ -122,6 +191,14 @@ static void cmd_history() {
     }
 }
 
+static void cpuid() {
+    char vendor[13];
+    CGV(vendor);
+    print("CPU Vendor: ");
+    print(vendor);
+    print("\r\n");
+}
+
 static void cmd_dir() {
     Fat12Entry entries[FAT_MAX_FILES];
     int count = fat_list(entries, FAT_MAX_FILES);
@@ -131,14 +208,18 @@ static void cmd_dir() {
 
     print("Directory listing:\r\n");
     for (int i = 0; i < count; i++) {
+    if (entries[i].is_dir) {
+        print("  [DIR] ");
+        print(entries[i].name);
+    } else {
         print("  ");
         print(entries[i].name);
         print("  (");
         print_uint(entries[i].size);
-        print(" bytes)\r\n");
+        print(" bytes)");
     }
-    print_uint(count);
-    print(" file(s).\r\n");
+    print("\r\n");
+}
 }
 
 static uint8_t file_buf[32 * 1024];
@@ -172,7 +253,7 @@ static void cmd_mfetch() {
     print(" ###  ###  #### ##     ### ##    ####   \r\n");
     print(" ################ ########  ########    \r\n");
     print("\r\n");
-    print("  OS:      MasterOS v0.6.6 \"Terra\"\r\n");
+    print("  OS:      MasterOS v0.6.7 \"Spatium\"\r\n");
     print("  Kernel:  Custom x86 (32-bit)\r\n");
     print("  Shell:   mShell\r\n");
     print("  Memory:  ");
@@ -197,6 +278,11 @@ static void cmd_mfetch() {
     print("  Files:   ");
     print_uint(file_count);
     print(" file(s) in root\r\n");
+    print("  CPU:     ");
+    cpuid();
+    print("  Uptime:  ");
+    print_uint(GUS());
+    print(" seconds\r\n");
     print("\r\n");
 }
 
@@ -349,6 +435,13 @@ void shell_execute(const char* cmd) {
     else if (k_strcmp(verb, "history") == 0) cmd_history();
     else if (k_strcmp(verb, "color") == 0) cmd_color(arg);
     else if (k_strcmp(verb, "run") == 0) cmd_run(arg);
+    else if (k_strcmp(verb, "cpuid") == 0) cpuid();
+    else if (k_strcmp(verb, "reboot")   == 0) cmd_reboot();
+    else if (k_strcmp(verb, "shutdown") == 0) cmd_shutdown();
+    else if (k_strcmp(verb, "setprompt") == 0) cmd_setprompt(arg);
+    else if (k_strcmp(verb, "cd")    == 0) cmd_cd(arg);
+    else if (k_strcmp(verb, "mkdir") == 0) cmd_mkdir(arg);
+    else if (k_strcmp(verb, "rmdir") == 0) cmd_rmdir(arg);
     else {
         print("Unknown command: ");
         print(verb);
@@ -366,7 +459,7 @@ void shell_handle_char(char c) {
         if (shell_len > 0) history_save(shell_buf);
         shell_execute(shell_buf);
         shell_len = 0;
-        print(">");
+        print_prompt();
     } else if (c == '\b') {
         if (shell_len > 0) { shell_len--; print("\b"); }
     } else {

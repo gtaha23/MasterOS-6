@@ -48,12 +48,9 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
 
     shell_init();
     initKeyb();
-    print("Alloc start: ");
-    print_uint(physicalAllocStart);
-    print("\r\n");
     speaker_stop();
-
-    print(">");
+    print_prompt();
+    reset_color();
 
     for(;;);
 }

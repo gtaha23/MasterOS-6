@@ -19,9 +19,10 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 - Note: !! This statistics are tested !!
 
 # Updates / Logs
-- v0.6.6 Terra version
-- Makefile fixes
-- Files management
+- v0.6.7 Spatium version
+- More filesystem commands
+- desing upgrades
+- more info with mfetch
 
 # Spoilers
 - More commands going to be added
