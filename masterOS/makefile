@@ -11,7 +11,7 @@ clean:
 
 kernel:
 	$(CC) $(CFLAGS) -c src/kernel.c -o kernel.o
-	$(CC) $(CFLAGS) -c src/drivers/vga.c -o vga.o
+	$(CC) $(CFLAGS) -c src/drivers/vga/vga.c -o vga.o
 	$(CC) $(CFLAGS) -c src/drivers/gdt.c -o gdt.o
 	$(CC) $(CFLAGS) -c src/memory/util.c -o util.o
 	$(CC) $(CFLAGS) -c src/interrupts/idt.c -o idt.o
@@ -29,6 +29,9 @@ kernel:
 	$(CC) $(CFLAGS) -c src/drivers/device/cpu.c -o cpu.o
 	$(CC) $(CFLAGS) -c src/power.c -o power.o
 	$(CC) $(CFLAGS) -c src/login.c -o login.o
+	$(CC) $(CFLAGS) -c src/drivers/vga/VGAM.c -o VGAM.o
+	$(CC) $(CFLAGS) -c src/drivers/vga/VGAF.c -o VGAF.o
+	$(CC) $(CFLAGS) -c src/drivers/vga/VGAR.c -o VGAR.o
 
 bootloader:
 	$(AS) -f elf32 src/boot.s -o boot.o
@@ -36,7 +39,7 @@ bootloader:
 	$(AS) -f elf32 src/interrupts/idt.s -o idts.o
 
 iso:
-	$(LD) -m elf_i386 -T linker.ld -o kernel boot.o kernel.o vga.o gdt.o gdts.o util.o idt.o idts.o timer.o stdio.o keyboard.o memory.o kmalloc.o shell.o fat.o ata.o speaker.o rtc.o exec.o cpu.o power.o login.o
+	$(LD) -m elf_i386 -T linker.ld -o kernel boot.o kernel.o vga.o gdt.o gdts.o util.o idt.o idts.o timer.o stdio.o keyboard.o memory.o kmalloc.o shell.o fat.o ata.o speaker.o rtc.o exec.o cpu.o power.o login.o VGAM.o VGAF.o VGAR.o
 	mv kernel mOS/boot/kernel
 	grub-mkrescue -o kernel.iso mOS/
 	rm *.o

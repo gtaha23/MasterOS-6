@@ -1,5 +1,5 @@
 #include "login.h"
-#include "drivers/vga.h"
+#include "drivers/vga/vga.h"
 #include "drivers/device/keyboard.h"
 
 #define MAX_INPUT 32

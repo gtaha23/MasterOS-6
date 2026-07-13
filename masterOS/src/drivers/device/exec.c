@@ -1,6 +1,6 @@
 #include "exec.h"
 #include "../fs/fat.h"
-#include "../vga.h"
+#include "../vga/vga.h"
 
 #define LOAD_ADDRESS 0xC0800000  
 #define MAX_PROGRAM_SIZE (64 * 1024)  // 64KB max

@@ -1,3 +1,5 @@
+#ifndef MEMORY_UTIL_H
+#define MEMORY_UTIL_H
 #include "stdint.h"
 
 void memSet(void *dest, char val, uint32_t count);
@@ -23,3 +25,5 @@ static inline uint16_t inPortW(uint16_t port) {
 static inline void outPortW(uint16_t port, uint16_t val) {
     __asm__ volatile ("outw %0, %1" : : "a"(val), "Nd"(port));
 }
+
+#endif

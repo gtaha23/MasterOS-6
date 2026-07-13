@@ -1,6 +1,6 @@
 #include "stdint.h"
 #include "interrupts/idt.h"
-#include "drivers/vga.h"
+#include "drivers/vga/vga.h"
 #include "timer.h"
 #include "drivers/gdt.h"
 #include "stdlib/stdio.h"
@@ -15,6 +15,9 @@
 #include "memory/util.h"
 #include "login.h"
 #include "drivers/device/cpu.h"
+#include "drivers/vga/VGAM.h"
+#include "drivers/vga/VGAF.h"
+#include "drivers/vga/VGAR.h"
 
 uint32_t total_mem_kb = 0;
 
@@ -23,6 +26,8 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo);
 void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
     (void)magic;
 	total_mem_kb = bootInfo->mem_upper;
+    VGALF8X8F();
+    VGAHeight = 50;
     Reset();
     speaker_play(800);
     print("Welcome to MasterOS!\r\n");

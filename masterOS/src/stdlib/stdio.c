@@ -1,6 +1,6 @@
 #include "stdint.h"
 #include "stdio.h"
-#include "../drivers/vga.h"
+#include "../drivers/vga/vga.h"
 
 void putc(char c){
     print(&c);
