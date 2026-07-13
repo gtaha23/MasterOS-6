@@ -103,7 +103,7 @@ static void cmd_help() {
     print("  create <file> <context> - Creates a file with the given context\r\n");
     print("  time       - Show the current time & date\r\n");
     print("  history    - Shows past runned commands\r\n");
-    print("  color <text> <background> - Changes the text & background color\r\n");
+    print("  color <text> <background> - Changes the system color (colorhelp for color codes) \r\n");
     print("  run <program> - Runs the given .COM program\r\n");
     print("  cpuid      - Shows CPU vendor string\r\n");
     print("  reboot     - Reboots the system\r\n");
@@ -310,15 +310,19 @@ static void cmd_create(const char* arg) {
 }
 
 static void cmd_color(const char* arg) {
-	if (!arg) { print("Usage: color <text> <background>\r\n"); return; }
+	if (!arg) { print("Usage: color <text> <background> colorhelp to color codes\r\n"); return; }
 
 	int fg = k_atoi(arg);           
 	const char* bg_str = k_arg(arg);
-	if (!bg_str) { print("Usage: color <text> <background>\r\n"); return; }
+	if (!bg_str) { print("Usage: color <text> <background> colorhelp to color codes\r\n"); return; }
 	        
 	int bg = k_atoi(bg_str);       
 	
 	set_color(fg, bg);
+}
+
+static void cmd_colorhelp() {
+    print("0 FOR BLACK\r\n1 FOR BLUE\r\n2 FOR GREEN\r\n3 FOR CYAN\r\n4 FOR RED\r\n5 FOR MAGENTA\r\n6 FOR BROWN\r\n7 FOR LIGHT GREY\r\n8 FOR DARK GREY\r\n9 FOR LIGHT BLUE\r\n10 FOR LIGHT CYAN\r\n11 FOR DARK CYAN\r\n12 FOR LIGHT MAGENTA\r\n13 FOR DARK MAGENTA\r\n14 FOR LIGHT BROWN\r\n15 FOR WHITE\r\nUsage: color <text> <background>\r\n");
 }
 
 static void cmd_del(const char* arg) {
@@ -434,6 +438,7 @@ void shell_execute(const char* cmd) {
     else if (k_strcmp(verb, "time") == 0) cmd_time();
     else if (k_strcmp(verb, "history") == 0) cmd_history();
     else if (k_strcmp(verb, "color") == 0) cmd_color(arg);
+    else if (k_strcmp(verb, "colorhelp") == 0) cmd_colorhelp();
     else if (k_strcmp(verb, "run") == 0) cmd_run(arg);
     else if (k_strcmp(verb, "cpuid") == 0) cpuid();
     else if (k_strcmp(verb, "reboot")   == 0) cmd_reboot();
