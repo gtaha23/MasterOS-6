@@ -31,6 +31,7 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
     Reset();
     speaker_play(800);
     print("Welcome to MasterOS!\r\n");
+    print("VGA Driver(s) [DONE]\r\n");
     initGDT();
     print("GDT [DONE]\r\n");
     initIDT();
