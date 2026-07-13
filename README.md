@@ -46,9 +46,9 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 
 
 # Updates / Logs
-- v0.6.7 Spatium version
-- More filesystem commands
-- desing upgrades
+- v0.6.8 OSIX version
+- VGA system completely rewritten
+- resolution now 80x50 in case of rows and columns
 - more info with mfetch
 - "fat.h" fixed
 - Command "colorhelp" added
