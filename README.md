@@ -18,6 +18,33 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 - GPU optional
 - Note: !! This statistics are tested !!
 
+## Required Packages 
+- build-essential
+- gcc
+- g++
+- make
+- cmake
+- nasm
+- xorriso
+- grub-pc-bin
+- grub-common
+- mtools
+- qemu-system-x86
+- gdb
+- git
+- wget
+- curl
+- python3
+- python3-pip
+- bison
+- flex
+- libgmp3-dev
+- libmpc-dev
+- libmpfr-dev
+- texinfo
+- libisl-dev
+
+
 # Updates / Logs
 - v0.6.7 Spatium version
 - More filesystem commands
