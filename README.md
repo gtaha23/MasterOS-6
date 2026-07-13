@@ -50,6 +50,8 @@ And finally we are using C and Rust on 2 different OS projects (The rust one is 
 - More filesystem commands
 - desing upgrades
 - more info with mfetch
+- "fat.h" fixed
+- Command "colorhelp" added
 
 # Spoilers
 - More commands going to be added
