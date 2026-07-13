@@ -13,6 +13,8 @@
 #include "drivers/fs/fat.h"
 #include "drivers/device/speaker.h"
 #include "memory/util.h"
+#include "login.h"
+#include "drivers/device/cpu.h"
 
 uint32_t total_mem_kb = 0;
 
@@ -46,9 +48,12 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
     else
         print("FAT [FAILED]\r\n");
 
-    shell_init();
-    initKeyb();
     speaker_stop();
+    initKeyb();
+    print("Keyboard [DONE]\r\n");
+    login();
+    shell_init();
+    keyboard_set_char_handler(shell_handle_char);
     print_prompt();
     reset_color();
 

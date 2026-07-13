@@ -65,6 +65,12 @@ UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,
 UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN,UNKNOWN
 };
 
+static void (*char_handler)(char) = 0;
+
+void keyboard_set_char_handler(void (*handler)(char)) {
+    char_handler = handler;
+}
+
 void initKeyb(){
     capsOn = false;
     capsLock = false;
@@ -102,7 +108,9 @@ void keybHandler(struct InterruptRegisters *regs){
 
                 // Only forward printable ASCII, backspace, and newline
                 if (key < 0x80 || key == '\b' || key == '\n') {
-                    shell_handle_char((char)key);
+                    if (char_handler) {
+                        char_handler((char)key);
+                    }
                 }
             }
             break;
