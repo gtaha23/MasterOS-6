@@ -38,3 +38,8 @@ int fat_rename(const char* old_name, const char* new_name);
 
 // Write a new file (or overwrite an existing one). Returns 0 on success, -1 on error.
 int fat_write(const char* name, const uint8_t* data, uint32_t size);
+
+const char* fat_get_current_path();
+int fat_cd(const char* name);
+int fat_mkdir(const char* name);
+int fat_rmdir(const char* name);
