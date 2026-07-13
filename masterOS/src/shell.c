@@ -17,7 +17,6 @@ static char history[HISTORY_SIZE][SHELL_BUFFER_SIZE];
 static int  history_count = 0;  // how many entries stored
 static int  history_index = -1; // which entry we're browsing (-1 = not browsing)
 
-
 // ─── Buffer ───
 
 static char shell_buf[SHELL_BUFFER_SIZE];
@@ -76,13 +75,14 @@ static void cmd_setprompt(const char* arg) {
 }
 
 void print_prompt() {
+    uint16_t saved = get_current_color();
     set_color(2, 0);  print(prompt_name);
     set_color(7, 0);  print("@");
     set_color(10, 0); print("MasterOS");
     set_color(7, 0);  print(":");
     set_color(14, 0); print(fat_get_current_path());
     set_color(7, 0);  print("> ");
-    reset_color();
+    restore_color(saved);
 }
 
 // ─── Commands ────
@@ -103,7 +103,7 @@ static void cmd_help() {
     print("  create <file> <context> - Creates a file with the given context\r\n");
     print("  time       - Show the current time & date\r\n");
     print("  history    - Shows past runned commands\r\n");
-    print("  color <text> <background> - Changes the text & background color\r\n");
+    print("  color <text> <background> - Changes the system color (colorhelp for color codes) \r\n");
     print("  run <program> - Runs the given .COM program\r\n");
     print("  cpuid      - Shows CPU vendor string\r\n");
     print("  reboot     - Reboots the system\r\n");
@@ -310,15 +310,19 @@ static void cmd_create(const char* arg) {
 }
 
 static void cmd_color(const char* arg) {
-	if (!arg) { print("Usage: color <text> <background>\r\n"); return; }
+	if (!arg) { print("Usage: color <text> <background> colorhelp to color codes\r\n"); return; }
 
 	int fg = k_atoi(arg);           
 	const char* bg_str = k_arg(arg);
-	if (!bg_str) { print("Usage: color <text> <background>\r\n"); return; }
+	if (!bg_str) { print("Usage: color <text> <background> colorhelp to color codes\r\n"); return; }
 	        
 	int bg = k_atoi(bg_str);       
 	
 	set_color(fg, bg);
+}
+
+static void cmd_colorhelp() {
+    print("0 FOR BLACK\r\n1 FOR BLUE\r\n2 FOR GREEN\r\n3 FOR CYAN\r\n4 FOR RED\r\n5 FOR MAGENTA\r\n6 FOR BROWN\r\n7 FOR LIGHT GREY\r\n8 FOR DARK GREY\r\n9 FOR LIGHT BLUE\r\n10 FOR LIGHT CYAN\r\n11 FOR DARK CYAN\r\n12 FOR LIGHT MAGENTA\r\n13 FOR DARK MAGENTA\r\n14 FOR LIGHT BROWN\r\n15 FOR WHITE\r\nUsage: color <text> <background>\r\n");
 }
 
 static void cmd_del(const char* arg) {
@@ -442,6 +446,7 @@ void shell_execute(const char* cmd) {
     else if (k_strcmp(verb, "cd")    == 0) cmd_cd(arg);
     else if (k_strcmp(verb, "mkdir") == 0) cmd_mkdir(arg);
     else if (k_strcmp(verb, "rmdir") == 0) cmd_rmdir(arg);
+    else if (k_strcmp(verb, "colorhelp") == 0) cmd_colorhelp();
     else {
         print("Unknown command: ");
         print(verb);

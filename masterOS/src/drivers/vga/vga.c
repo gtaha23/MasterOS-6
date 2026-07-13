@@ -9,6 +9,7 @@ uint16_t column = 0;
 uint16_t line = 0;
 uint16_t* const vga = (uint16_t* const) 0xC00B8000;
 
+static uint16_t user_color = 0;
 const uint16_t defaultColor = (COLOR8_BLACK << 12) | (COLOR8_LIGHT_GREY << 8);
 uint16_t currColor = defaultColor;
 uint16_t* videoMemory = (uint16_t*) 0xC00B8000;
@@ -43,6 +44,7 @@ void reset_color()  {
 
 void set_color(uint8_t fg, uint8_t bg) {
     currColor = ((bg & 0x0F) << 12) | ((fg & 0x0F) << 8);
+    user_color = currColor;
 }
 
 void scrollUp() {
@@ -71,6 +73,9 @@ void VGASM80X50() {
 
     Reset();
 }
+
+uint16_t get_current_color() { return currColor; }
+void restore_color(uint16_t color) { currColor = color; }
 
 void print(const char* s) {
     while(*s) {
