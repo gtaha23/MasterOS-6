@@ -27,3 +27,5 @@ void newLine();
 void Reset();
 void set_color(uint8_t fg, uint8_t bg);
 void reset_color();
+uint16_t get_current_color();
+void restore_color(uint16_t color);
