@@ -101,7 +101,7 @@ static void cmd_help() {
     print("  copy <a> <b>- Copy a file\r\n");
     print("  halt       - Halt the system\r\n");
     print("  create <file> <context> - Creates a file with the given context\r\n");
-    print("  time       - Show the current time & date\r\n");
+    print("  time <timezone>  - Show the current time & date\r\n");
     print("  history    - Shows past runned commands\r\n");
     print("  color <text> <background> - Changes the system color (colorhelp for color codes) \r\n");
     print("  run <program> - Runs the given .COM program\r\n");
@@ -396,18 +396,17 @@ static void cmd_run(const char* arg){
 	exec_run(arg);
 }
 
-static void cmd_time() {
+static void cmd_time(const char* arg) {
 	RTCTime t;
 	rtc_read(&t);
-	t.hours = t.hours + 3;            // ONLY MODIFY THIS SETTING TO MATCH YOUR
-	if (t.hours >= 24) t.hours -= 24; // UTC TIMEZONE (MINE IS +3)
+    int offset = k_atoi(arg);
+	t.hours = t.hours + offset;   // ONLY MODIFY THIS SETTING TO MATCH YOUR
+	if (t.hours >= 24) t.hours -= 24;     // UTC TIMEZONE (MINE IS +3)
 
 	print_uint(t.hours);
 	print(":");
 	print_uint(t.minutes);
-	
 	print("  ");
-	
 	print_uint(t.day);
 	print("/");
 	print_uint(t.month);
@@ -435,7 +434,7 @@ void shell_execute(const char* cmd) {
     else if (k_strcmp(verb, "ren")    == 0) cmd_ren(arg);
     else if (k_strcmp(verb, "copy")   == 0) cmd_copy(arg);
     else if (k_strcmp(verb, "create")  == 0) cmd_create(arg);
-    else if (k_strcmp(verb, "time") == 0) cmd_time();
+    else if (k_strcmp(verb, "time") == 0) cmd_time(arg);
     else if (k_strcmp(verb, "history") == 0) cmd_history();
     else if (k_strcmp(verb, "color") == 0) cmd_color(arg);
     else if (k_strcmp(verb, "run") == 0) cmd_run(arg);
