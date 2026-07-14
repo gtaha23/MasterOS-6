@@ -18,7 +18,7 @@ void VGALOADREG(const struct VGARegisters* regs)
         VGAWCRTC(i, regs->CRTCR[i]);
 
     for (size_t i = 0; i < 9; i++)
-        VGAGRAPH(i, regs->GCR[i]);
+        VGAWGRAPH(i, regs->GCR[i]);
 
     for (size_t i = 0; i < 21; i++)
         VGAWATTR(i, regs->ACR[i]);
@@ -43,7 +43,7 @@ void VGAWSR(uint8_t index, uint8_t value) {
     outPortB(0x3C5, value);
 }
 
-void VGAGRAPH(uint8_t index, uint8_t value) {
+void VGAWGRAPH(uint8_t index, uint8_t value) {
     outPortB(0x3CE, index);
     outPortB(0x3CF, value);
 }
