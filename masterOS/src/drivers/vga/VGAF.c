@@ -130,7 +130,8 @@ void VGALF(const uint8_t *font, uint32_t height) {
         "movb $0x20, %%al\n\t"
         "outb %%al, %%dx\n\t"
         :
-        : "r"(max_scan_line)
+        : "q"(max_scan_line)
         : "ax", "dx"
     );
 }
+
