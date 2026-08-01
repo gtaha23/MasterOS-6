@@ -21,6 +21,7 @@ static int  history_index = -1; // which entry we're browsing (-1 = not browsing
 
 static char shell_buf[SHELL_BUFFER_SIZE];
 static int  shell_len = 0;
+const char OS_VER[] = "MasterOS v0.6.9 \"OSIX\"";
 
 // ─── String helpers ───
 
@@ -253,7 +254,9 @@ static void cmd_mfetch() {
     print(" ###  ###  #### ##     ### ##    ####   \r\n");
     print(" ################ ########  ########    \r\n");
     print("\r\n");
-    print("  OS:      MasterOS v0.6.8 \"OSIX\"\r\n");
+    print("  OS:      ");
+    print(OS_VER);
+    print("\r\n");
     print("  Kernel:  Custom x86 (32-bit)\r\n");
     print("  Shell:   mShell\r\n");
     print("  Memory:  ");

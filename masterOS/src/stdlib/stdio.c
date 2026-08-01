@@ -13,6 +13,16 @@ void puts(const char* s){
     }
 }
 
+void printHex(uint32_t n) {
+	char hex_chars[] = "0123456789ABCDEF";
+	char buf[11] = "0x00000000";
+	for (int i = 9; i >= 2; i--) {
+		buf[i] = hex_chars[n & 0xF];
+		n >>= 4;
+	}
+	print(buf);
+}
+
 void printf(const char* fmt, ...){
     int* argp = (int*) &fmt;
     int state = PRINTF_STATE_START;

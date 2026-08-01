@@ -138,6 +138,28 @@ void isr_handler(struct InterruptRegisters* regs) {
 	if(regs->int_no < 32){
 		print(exception_messages[regs->int_no]);
 		print("\n");
+
+		if (regs->int_no == 14) { // Page Fault
+			uint32_t faulting_address = regs->cr2;
+
+			print("Faulting address: ");
+			printHex(faulting_address);
+			print("\n");
+
+			print("Error code: ");
+			printHex(regs->err_code);
+			print("  (");
+			if (!(regs->err_code & 0x1)) print("not-present ");
+			else print("protection-violation ");
+			if (regs->err_code & 0x2) print("write "); else print("read ");
+			if (regs->err_code & 0x4) print("user-mode "); else print("kernel-mode ");
+			print(")\n");
+
+			print("EIP: ");
+			printHex(regs->eip);
+			print("\n");
+		}
+
 		print("Exception! System Halted\n");
 		for (;;);
 	}

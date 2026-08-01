@@ -51,6 +51,8 @@ disk:
 	mkdir -p /tmp/mnt_disk
 	sudo mount -o loop disk.img /tmp/mnt_disk
 	echo "Hello from MasterOS!" | sudo tee /tmp/mnt_disk/HELLO.TXT
+	sudo cp HELLO.COM /tmp/mnt_disk/HELLO.COM
+	sudo cp TEST.COM /tmp/mnt_disk/TEST.COM
 	sudo umount /tmp/mnt_disk
 	rmdir /tmp/mnt_disk
 
@@ -61,3 +63,7 @@ run:
 	    -display gtk \
 	    -audiodev alsa,id=speaker \
 	    -machine pcspk-audiodev=speaker
+
+programs:
+	$(AS) -f bin hello.asm -o HELLO.COM
+	$(AS) -f bin prog.asm -o TEST.COM

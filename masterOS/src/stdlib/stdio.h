@@ -4,6 +4,7 @@ void putc(char c);
 void puts(const char* c);
 void printf(const char* fmt, ...);
 int * printf_number(int*, int, bool, int);
+void printHex(uint32_t n);
 
 extern void x86_div64_32(uint64_t, uint32_t, uint64_t*, uint32_t*);
 

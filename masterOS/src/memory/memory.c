@@ -91,9 +91,13 @@ void memMapPage(uint32_t virtualAddr, uint32_t physicalAddr, uint32_t flags){
 		for (uint32_t i = 0; i < 1024; i++){
 			pt[i] = 0;
 		}
+	} else {
+		if (flags & PAGE_FLAG_USER) {
+			pageDir[pdIndex] |= PAGE_FLAG_USER;
+		}
 	}
 
-	pt[ptIndex] = physicalAddr | PAGE_FLAG_PRES | flags;
+	pt[ptIndex] = physicalAddr | PAGE_FLAG_PRES | pt[ptIndex] | flags;
 	mem_num_vpages++;
 	inval(virtualAddr);
 
@@ -119,11 +123,10 @@ uint32_t pmmAllocPageFrame(){
 			bool used = byte >> i & 1;
 
 			if(!used){
-				byte ^= (-1 ^byte) & (1 << i);
-				PMB[b] = byte;
+				PMB[b] = (1 << i);
 				totalAlloc++;
 				
-				uint32_t addr = (b*8*i) * 0x1000;
+				uint32_t addr = ((b * 8) + i) * 0x1000;
 				return addr;
 			}
 		}

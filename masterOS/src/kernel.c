@@ -57,6 +57,8 @@ void kmain(uint32_t magic, struct multiboot_info* bootInfo) {
     speaker_stop();
     initKeyb();
     print("Keyboard [DONE]\r\n");
+    memMapPage(0x000B8000, 0x000B8000, PAGE_FLAG_PRES | PAGE_FLAG_WRT);
+    print("User Memory Map [DONE]\r\n");
     login();
     shell_init();
     keyboard_set_char_handler(shell_handle_char);
