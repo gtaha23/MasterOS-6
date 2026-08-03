@@ -1,75 +1,277 @@
+<div align="center">
+
 # MasterOS
-Think of an operating system that is lightweight, TUI-based, and open source!
-Well you just met MasterOS.
 
-# Origin
-MasterOS started as an script series made with batch. 
-then we built it with C# using the C.O.S.M.O.S toolkit to try creating an Operating System.
-And finally we are using C and Rust on 2 different OS projects (The rust one is just for experience)
+### A lightweight, open-source, terminal-based operating system for x86.
 
-## Dev team
-- gtaha23
-- e0tra
+[![Language](https://img.shields.io/badge/language-C-blue.svg)](#)
+[![Rust](https://img.shields.io/badge/Rust-experimental-orange.svg)](#)
+[![Architecture](https://img.shields.io/badge/Architecture-x86%20%7C%20amd64-success.svg)](#)
+[![Status](https://img.shields.io/badge/status-active-brightgreen.svg)](#)
+[![License](https://img.shields.io/badge/license-GPL-green.svg)](#)
 
-## System Requirements
-- 32 MB Hard Disk
-- 16 MB RAM
-- Any 1 Core or more x86 / amd64 CPU
-- GPU optional
-- Note: !! This statistics are tested !!
+*A hobby operating system focused on low-level programming, performance, and learning operating system internals.*
 
-## Required Packages to Develop the OS
-- build-essential
-- gcc
-- g++
-- make
-- cmake
-- nasm
-- xorriso
-- grub-pc-bin
-- grub-common
-- mtools
-- qemu-system-x86
-- gdb
-- git
-- wget
-- curl
-- python3
-- python3-pip
-- bison
-- flex
-- libgmp3-dev
-- libmpc-dev
-- libmpfr-dev
-- texinfo
-- libisl-dev
+</div>
 
+---
 
-# Updates / Logs
-- v0.6.9 OSIX version
-- Interrupt errors debugging extended & made easy
-- Dynamic version constant added
-- Execution bugs that causes crashes fixed with patches to memory.c, exec.c, idt.c
+# About
 
-# Spoilers
-- More commands going to be added
-- Base GUI will be added
+**MasterOS** is a lightweight, open-source operating system written primarily in **C**, with an experimental **Rust** branch for exploring modern systems programming.
 
-# Want to help us?
-You can reach us from our e-mails to join our project and contribute to the mOS projects!
+Rather than targeting everyday desktop use, MasterOS is a learning-oriented operating system designed to explore:
 
-# ScreenShots
-- The help command working <br />
-![help command](image-1.png)
+- Kernel development
+- Memory management
+- Interrupt handling
+- Device drivers
+- VGA graphics
+- Filesystems
+- Command-line interfaces
+- Low-level x86 programming
 
-- The version being checked <br />
-![version command](image-3.png)
+MasterOS currently provides a lightweight **terminal user interface (TUI)** while a graphical interface is planned for future releases.
 
-- The famous oldfetch command renamed to mfetch <br />
-![mfetch command](image-2.png)
+---
 
-- The time being showed (0:5 means 00:05) <br />
-![time command](image-4.png)
+# History
 
-- The mfetch with the newest VGA Driver of 0.6.8 Update <br />
-![osix mfetch command](image.png)
+The project has evolved through multiple generations.
+
+### Generation 1
+
+A simple operating-system simulation written entirely in **Batch**.
+
+### Generation 2
+
+Rewritten in **C#** using the **COSMOS Toolkit** to create a bootable operating system.
+
+### Generation 3 (Current)
+
+A complete rewrite in **C**, featuring its own kernel, drivers, memory management, interrupt handling, and command interpreter.
+
+### Generation 4 (Experimental)
+
+A parallel implementation in **Rust**, created for learning modern systems programming concepts.
+
+---
+
+# Features
+
+- Lightweight kernel
+- Interactive shell
+- Command interpreter
+- VGA text mode support
+- Keyboard input
+- Interrupt Descriptor Table (IDT)
+- Memory management
+- Executable loader
+- Dynamic version system
+- Modular architecture
+- Open source
+
+---
+
+# Screenshots
+
+## Help Command
+
+![Help](image-1.png)
+
+---
+
+## Version Command
+
+![Version](image-3.png)
+
+---
+
+## mfetch
+
+![mfetch](image-2.png)
+
+---
+
+## Time Command
+
+![Time](image-4.png)
+
+---
+
+## New VGA Driver
+
+![VGA](image.png)
+
+---
+
+# System Requirements
+
+| Component | Minimum |
+|------------|---------|
+| CPU | x86 |
+| RAM | 16 MB |
+| Storage | 32 MB |
+| GPU | Optional |
+
+> These requirements were measured during testing.
+
+---
+
+# Building
+
+## Required Packages (Ubuntu / Debian)
+
+```bash
+sudo apt install \
+build-essential \
+gcc \
+g++ \
+make \
+cmake \
+nasm \
+xorriso \
+grub-pc-bin \
+grub-common \
+mtools \
+qemu-system-x86 \
+gdb \
+git \
+wget \
+curl \
+python3 \
+python3-pip \
+bison \
+flex \
+libgmp3-dev \
+libmpc-dev \
+libmpfr-dev \
+texinfo \
+libisl-dev
+```
+
+---
+
+## Clone
+
+```bash
+git clone https://github.com/gtaha23/MasterOS.git
+cd MasterOS
+```
+
+---
+
+## Build
+
+```bash
+make
+```
+
+---
+
+## Run
+
+```bash
+make run
+```
+
+or
+
+```bash
+qemu-system-i386 -cdrom kernel.iso \
+	    -drive file=disk.img,format=raw,index=1,media=disk,if=ide \
+	    -boot d -m 32 \
+	    -display gtk \
+	    -audiodev alsa,id=speaker \
+	    -machine pcspk-audiodev=speaker
+```
+
+---
+
+# Roadmap
+
+## Current
+
+- Interrupt handling
+- Memory management
+- Shell
+- VGA driver
+- Executable loading
+
+## Planned
+
+- GUI
+- Virtual file system
+- FAT support
+- Better scheduler
+- Networking
+- User mode
+- Multitasking
+- ELF loader
+- USB support
+- Audio
+
+---
+
+# Latest Update
+
+## v0.6.9 (OSIX)
+
+### Improvements
+
+- Improved interrupt debugging
+- Dynamic version constant
+- Fixed execution crashes
+- Memory subsystem improvements
+- IDT fixes
+- Executable loader patches
+
+---
+
+# Development Team
+
+| Name | Role |
+|------|------|
+| gtaha23 | Founder & Lead Developer |
+| e0tra | Developer |
+
+---
+
+# Why MasterOS?
+
+MasterOS is built to learn how modern operating systems work from the ground up.
+
+Instead of relying on existing kernels, nearly every subsystem is developed manually, making the project an excellent playground for systems programming.
+
+Whether you're interested in kernels, bootloaders, drivers, or low-level architecture, contributions and discussions are always welcome.
+
+---
+
+# Contributing
+
+Contributions are welcome!
+
+Feel free to:
+
+- Report bugs
+- Suggest features
+- Improve documentation
+- Submit pull requests
+
+If you'd like to become part of the development team, don't hesitate to get in touch.
+
+---
+
+# License
+
+This project is licensed under the GPL License.
+
+---
+
+<div align="center">
+
+**Built with ❤️ in C (and a little Rust).**
+
+⭐ Star the repository if you enjoy operating system development.
+
+</div>
