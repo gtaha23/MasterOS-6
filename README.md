@@ -1,16 +1,17 @@
 <div align="center">
 
+<img src="mOS.png" alt="MasterOS Logo" width="500">
+
 # MasterOS
 
-### A lightweight, open-source, terminal-based operating system for x86.
+### Lightweight • Open Source • x86 Operating System
 
-[![Language](https://img.shields.io/badge/language-C-blue.svg)](#)
-[![Rust](https://img.shields.io/badge/Rust-experimental-orange.svg)](#)
-[![Architecture](https://img.shields.io/badge/Architecture-x86%20%7C%20amd64-success.svg)](#)
-[![Status](https://img.shields.io/badge/status-active-brightgreen.svg)](#)
-[![License](https://img.shields.io/badge/license-GPL-green.svg)](#)
+*A hobby operating system written in C, focused on learning kernel development and low-level systems programming.*
 
-*A hobby operating system focused on low-level programming, performance, and learning operating system internals.*
+[![Language](https://img.shields.io/badge/C-17-blue.svg)](#)
+[![Rust](https://img.shields.io/badge/Rust-Experimental-orange.svg)](#)
+[![Architecture](https://img.shields.io/badge/x86-32%2F64--bit-success.svg)](#)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)
 
 </div>
 
