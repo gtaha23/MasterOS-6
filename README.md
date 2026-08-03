@@ -9,7 +9,7 @@
 *A hobby operating system written in C, focused on learning kernel development and low-level systems programming.*
 
 [![Language](https://img.shields.io/badge/C-17-blue.svg)](#)
-[![Architecture](https://img.shields.io/badge/x86-32%2F64--bit-success.svg)](#)
+[![Architecture](https://img.shields.io/badge/x86-32--bit-success.svg)](#)
 [![License](https://img.shields.io/badge/License-GPL-green.svg)](#)
 
 </div>
